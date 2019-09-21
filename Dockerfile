@@ -39,4 +39,4 @@ COPY . .
 ENTRYPOINT ["dumb-init", "--"]
 # CMD ["node", "./app/src/app.js"]
 # CMD ["bash"]
-CMD ["bash", "-c", "./startup.sh && bash"]
+CMD ["bash", "-c", "./startup.sh && node ./app/src/app.js"]
