@@ -1,8 +1,33 @@
 require('dotenv').config();
 const puppeteer = require('puppeteer');
 const timeout = require('./timeout');
+const childProcess = require('child_process');
 
 (async () => {
+
+  let child = childProcess.spawn('./windlogin.sh', [process.env.WINDSCRIBE_LOGIN, process.env.WINDSCRIBE_PASSWORD]);
+  child.on('exit', code => {
+    console.log(`Exit code is: ${code}`);
+  });
+  child.on('error', error => {
+    console.log(`Error: ${error}`);
+  });
+  for await (const data of child.stdout) {
+    console.log(`stdout from windscribe login: ${data}`);
+  };
+
+  child = childProcess.exec('windscribe connect DE');
+  child.on('exit', code => {
+    console.log(`Exit code is: ${code}`);
+  });
+  child.on('error', error => {
+    console.log(`Error: ${error}`);
+  });
+  for await (const data of child.stdout) {
+    console.log(`stdout from the windscribe connect: ${data}`);
+  };
+  console.log('finished')
+  // console.log(childProcess.spawnSync('windscribe', ['connect']).toString());
 
   console.log(process.env.CHROMIUM_PATH);
   console.log(process.env.ID);
@@ -25,16 +50,5 @@ const timeout = require('./timeout');
   await page.screenshot({ path: `./output/screen2_${process.env.ID}.png` });
   console.log('finished');
   await browser.close();
-  process.exit();
+  // process.exit();
 })();
-
-async function onMessage(message) {
-  message = message || 'Message is not defined';
-  logger.info(`${message} received`);
-  await telegramBot.sendMessage(message);
-  process.exit(0);
-}
-
-process.on('SIGINT', onMessage); // on ctrl+c
-process.on('SIGTERM', onMessage); // on kill pid
-process.on('SIGBREAK', onMessage); // ?
