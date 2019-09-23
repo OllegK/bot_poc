@@ -1,5 +1,5 @@
 #!/bin/bash
-rm ./output/*.png
+rm -f ./output/*.png
 
 docker run \
 --cap-add=NET_ADMIN \
